@@ -4,7 +4,7 @@ console.log(photoData);
 
 import { renderThumbnails } from './renderThumbnails.js';
 
-// временные данные для разработки
+// Временные данные для тестирования
 const temporaryData = [
   {
     url: 'https://example.com/photo1.jpg',
