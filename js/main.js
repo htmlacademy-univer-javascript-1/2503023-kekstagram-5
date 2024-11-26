@@ -23,3 +23,14 @@ const temporaryData = [
 document.addEventListener('DOMContentLoaded', () => {
   renderThumbnails(temporaryData);
 });
+import { showBigPicture } from './big-picture.js';
+
+const photoThumbnails = document.querySelectorAll('.picture'); // миниатюры фотографий
+const photosData = [...];
+
+// Обработчик кликов по миниатюре
+photoThumbnails.forEach((thumbnail, index) => {
+  thumbnail.addEventListener('click', () => {
+    showBigPicture(photosData[index]);
+  });
+});
