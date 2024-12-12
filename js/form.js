@@ -78,3 +78,40 @@ fileInput.addEventListener('change', () => {
     fileInput.value = ''; // Сбрасываем поле ввода
   }
 });
+const scaleControlSmaller = document.querySelector('.scale__control--smaller');
+const scaleControlBigger = document.querySelector('.scale__control--bigger');
+const scaleControlValue = document.querySelector('.scale__control--value');
+const previewImage = document.querySelector('.img-upload__preview img');
+let currentScale = 100; // Текущий масштаб в процентах
+
+// Функция для изменения масштаба
+const updateScale = (scale) => {
+  previewImage.style.transform = `scale(${scale / 100})`;
+  scaleControlValue.value = `${scale}%`;
+};
+
+// Уменьшение масштаба
+scaleControlSmaller.addEventListener('click', () => {
+  if (currentScale > 25) {
+    currentScale -= 25;
+    updateScale(currentScale);
+  }
+});
+
+// Увеличение масштаба
+scaleControlBigger.addEventListener('click', () => {
+  if (currentScale < 100) {
+    currentScale += 25;
+    updateScale(currentScale);
+  }
+});
+const effectsList = document.querySelector('.effects__list'); // Список фильтров
+
+effectsList.addEventListener('change', (event) => {
+  const effect = event.target.value;
+
+  previewImage.className = ''; // Сбрасываем классы
+  if (effect !== 'none') {
+    previewImage.classList.add(`effects__preview--${effect}`); // Применяем выбранный эффект
+  }
+});
