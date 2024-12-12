@@ -42,3 +42,11 @@ form.addEventListener('submit', async (event) => {
     showMessage(errorMessageTemplate); // Показываем сообщение об ошибке
   }
 })
+const closeFormButton = document.querySelector('.img-upload__cancel');
+const resetForm = () => {
+  form.reset(); // Сбрасываем форму
+  document.querySelector('.img-upload__overlay').classList.add('hidden'); // Скрываем форму
+};
+
+// Обработчик закрытия формы
+closeFormButton.addEventListener('click', resetForm);
