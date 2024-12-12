@@ -133,7 +133,7 @@ main {
 }
 
 .img-filters--inactive {
-  opacity: 0;
+  display: none;
 }
 
 .img-filters__button {
