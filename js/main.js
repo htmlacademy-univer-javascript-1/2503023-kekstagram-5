@@ -1,22 +1,21 @@
 import { fetchData } from './api.js';
 import { renderThumbnails } from './renderThumbnails.js';
 import { showBigPicture } from './big-picture.js';
+import { initFilters } from './filters.js';
 
-// Инициализация приложения
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    // Загружаем данные с сервера
-    const photosData = await fetchData();
+    const photosData = await fetchData(); // Загружаем данные с сервера
 
-    // Отрисовываем миниатюры
-    renderThumbnails(photosData);
+    renderThumbnails(photosData); // Отрисовываем миниатюры
 
-    // Добавляем обработчик для отображения большого изображения
-    const photoThumbnails = document.querySelectorAll('.picture'); // Миниатюры фотографий
+    initFilters(photosData); // Инициализируем фильтры
 
+    // Добавляем обработчики кликов для миниатюр
+    const photoThumbnails = document.querySelectorAll('.picture');
     photoThumbnails.forEach((thumbnail, index) => {
       thumbnail.addEventListener('click', () => {
-        showBigPicture(photosData[index]); // Передаём данные выбранной фотографии
+        showBigPicture(photosData[index]);
       });
     });
   } catch (error) {
