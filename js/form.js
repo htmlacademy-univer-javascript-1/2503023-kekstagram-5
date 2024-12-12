@@ -50,3 +50,31 @@ const resetForm = () => {
 
 // Обработчик закрытия формы
 closeFormButton.addEventListener('click', resetForm);
+const fileInput = document.querySelector('#upload-file'); // Поле для загрузки файла
+const previewImage = document.querySelector('.img-upload__preview img'); // Элемент для предварительного просмотра
+
+// Допустимые форматы изображений
+const FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];
+
+// Обработчик события загрузки файла
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0]; // Получаем загруженный файл
+  const fileName = file.name.toLowerCase(); // Приводим имя файла к нижнему регистру
+
+  // Проверяем, является ли файл изображением
+  const matches = FILE_TYPES.some((type) => fileName.endsWith(type));
+
+  if (matches) {
+    const reader = new FileReader();
+
+    // Когда файл загружен, отображаем его в окне предварительного просмотра
+    reader.addEventListener('load', () => {
+      previewImage.src = reader.result;
+    });
+
+    reader.readAsDataURL(file); // Читаем файл как URL
+  } else {
+    alert('Пожалуйста, выберите изображение формата JPG, JPEG, PNG или GIF');
+    fileInput.value = ''; // Сбрасываем поле ввода
+  }
+});
