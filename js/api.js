@@ -2,7 +2,7 @@ const BASE_URL = 'https://25.javascript.pages.academy/kekstagram';
 
 /**
  * Получение данных с сервера
- * @returns {Promise} - Возвращает данные фотографий
+ * @returns {Promise} - Возвращает массив объектов фотографий
  */
 const fetchData = async () => {
   try {
@@ -10,10 +10,10 @@ const fetchData = async () => {
     if (!response.ok) {
       throw new Error(`Ошибка загрузки данных: ${response.status}`);
     }
-    return await response.json(); // Парсим JSON
+    return await response.json();
   } catch (error) {
     console.error('Ошибка при загрузке данных:', error);
-    throw error; // Пробрасываем ошибку для обработки на уровне вызова
+    throw error;
   }
 };
 
@@ -38,5 +38,4 @@ const sendData = async (formData) => {
   }
 };
 
-// Экспортируем функции
 export { fetchData, sendData };
