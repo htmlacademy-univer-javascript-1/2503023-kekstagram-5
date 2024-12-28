@@ -133,7 +133,7 @@ main {
 }
 
 .img-filters--inactive {
-  display: none;
+  opacity: 0;
 }
 
 .img-filters__button {
@@ -1407,19 +1407,4 @@ main {
 
 .hidden {
   display: none;
-}
-
-/* Стиль для слайдера */
-.scale-container {
-  margin-top: 20px;
-}
-
-.img-upload__preview {
-  max-width: 100%;
-  transition: transform 0.3s ease;
-}
-
-#scale-slider {
-  margin-top: 10px;
-  width: 100%;
 }

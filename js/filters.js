@@ -1,72 +1,49 @@
-import { renderThumbnails } from './renderThumbnails.js';
-import { debounce } from './utils/debounce.js';
+import { debounce } from './util.js';
 
-// Константы
+const photoFilters = document.querySelector('.img-filters');
+const filterButtons = photoFilters.querySelectorAll('.img-filters__button');
 const RANDOM_PHOTOS_COUNT = 10;
 
-// DOM-элементы
-const filtersContainer = document.querySelector('.img-filters'); // Блок с фильтрами
-const filtersButtons = filtersContainer.querySelectorAll('.img-filters__button');
-
-// Функция для удаления ранее отрисованных миниатюр
-const clearThumbnails = () => {
-  const pictures = document.querySelectorAll('.picture'); // Найти все миниатюры
-  pictures.forEach((picture) => picture.remove()); // Удалить каждую миниатюру
-};
-
-// Функция для фильтрации случайных фотографий
-const getRandomPhotos = (photos) => {
-  const shuffled = [...photos].sort(() => 0.5 - Math.random()); // Перемешиваем массив
-  return shuffled.slice(0, RANDOM_PHOTOS_COUNT); // Берём первые 10 случайных элементов
-};
-
-// Функция для фильтрации обсуждаемых фотографий
-const getDiscussedPhotos = (photos) => {
-  return [...photos].sort((a, b) => b.comments.length - a.comments.length); // Сортировка по количеству комментариев
-};
-
-// Функция для управления фильтрами
-const applyFilter = (filter, photos) => {
-  clearThumbnails(); // Удаляем текущие миниатюры
-
-  let filteredPhotos = photos;
-
+function applyFilter(photos, filter) {
   switch (filter) {
     case 'filter-random':
-      filteredPhotos = getRandomPhotos(photos);
-      break;
+      return photos
+        .slice()
+        .sort(() => Math.random() - 0.5)
+        .slice(0, RANDOM_PHOTOS_COUNT);
     case 'filter-discussed':
-      filteredPhotos = getDiscussedPhotos(photos);
-      break;
+      return photos
+        .slice()
+        .sort((a, b) => b.comments.length - a.comments.length);
     default:
-      filteredPhotos = photos; // Фильтр по умолчанию
+      return photos;
   }
+}
 
-  renderThumbnails(filteredPhotos); // Отрисовываем миниатюры для выбранного фильтра
-};
+export function initFilters(photos, renderThumbnails) {
+  photoFilters.classList.remove('img-filters--inactive');
 
-// Функция для инициализации фильтров
-const initFilters = (photos) => {
-  filtersContainer.classList.remove('img-filters--inactive'); // Показываем блок фильтров
-
-  let activeButton = filtersContainer.querySelector('.img-filters__button--active'); // Текущая активная кнопка
-
-  filtersButtons.forEach((button) => {
+  filterButtons.forEach((button) => {
     button.addEventListener(
       'click',
-      debounce(() => {
-        // Обновляем активную кнопку
-        if (activeButton) {
-          activeButton.classList.remove('img-filters__button--active');
-        }
-        button.classList.add('img-filters__button--active');
-        activeButton = button;
+      debounce((evt) => {
+        // Удаляем класс активности у всех кнопок
+        filterButtons.forEach((btn) => btn.classList.remove('img-filters__button--active'));
 
-        // Применяем фильтр
-        applyFilter(button.id, photos);
+        // Добавляем класс активности нажатой кнопке
+        evt.target.classList.add('img-filters__button--active');
+
+        clearThumbnails();
+
+        // Применяем выбранный фильтр и отрисовываем миниатюры
+        const filteredPhotos = applyFilter(photos, evt.target.id);
+        renderThumbnails(filteredPhotos);
       }, 500)
     );
   });
-};
+}
 
-export { initFilters };
+function clearThumbnails() {
+  const pictures = document.querySelectorAll('.picture');
+  pictures.forEach((picture) => picture.remove());
+}
