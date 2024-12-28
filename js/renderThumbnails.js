@@ -1,22 +1,40 @@
-/**
- * Отрисовка миниатюр фотографий
- * @param {Array} photos - Массив объектов с данными фотографий
- */
-const renderThumbnails = (photos) => {
-  const pictureTemplate = document.querySelector('#picture').content; // Шаблон миниатюры
-  const pictureContainer = document.querySelector('.pictures'); // Контейнер для миниатюр
+import { openBigPicture } from './big-picture.js';
 
-  const fragment = document.createDocumentFragment();
+const thumbnailTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-  photos.forEach(({ url, likes, comments }) => {
-    const pictureElement = pictureTemplate.cloneNode(true);
-    pictureElement.querySelector('.picture__img').src = url;
-    pictureElement.querySelector('.picture__likes').textContent = likes;
-    pictureElement.querySelector('.picture__comments').textContent = comments.length;
-    fragment.appendChild(pictureElement);
+function createThumbnail(photoData) {
+  const thumbnail = thumbnailTemplate.cloneNode(true);
+  const img = thumbnail.querySelector('.picture__img');
+  img.src = photoData.url;
+  img.alt = photoData.description;
+
+  thumbnail.querySelector('.picture__likes').textContent = photoData.likes;
+  thumbnail.querySelector('.picture__comments').textContent = photoData.comments.length;
+
+  thumbnail.addEventListener('click', () => {
+    openBigPicture(photoData); // Открываем большое изображение
   });
 
-  pictureContainer.appendChild(fragment);
-};
+  return thumbnail;
+}
+
+function renderThumbnails(photoArray) {
+  const thumbnailContainer = document.querySelector('.pictures');
+
+  photoArray.forEach((photo) => {
+    const thumbnailElement = createThumbnail(photo);
+    thumbnailElement.querySelector('.picture__img').src = photo.url;
+    thumbnailElement.querySelector('.picture__likes').textContent = photo.likes;
+    thumbnailElement.querySelector('.picture__comments').textContent = photo.comments.length;
+
+    // Применяем эффект к миниатюре
+    if (photo.effect && photo.effect !== 'none') {
+      thumbnailElement.querySelector('.picture__img').classList.add(`effects__preview--${photo.effect}`);
+    }
+
+    thumbnailContainer.appendChild(thumbnailElement);
+  });
+}
+
 
 export { renderThumbnails };
