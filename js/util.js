@@ -1,15 +1,55 @@
-export function getRandomElement(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+const ERROR_DISPLAY_TIME = 5000;
 
-export function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const showAlert = (message) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = '100';
+  alertContainer.style.position = 'absolute';
+  alertContainer.style.left = '0';
+  alertContainer.style.top = '0';
+  alertContainer.style.right = '0';
+  alertContainer.style.padding = '10px 3px';
+  alertContainer.style.fontSize = '30px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = 'red';
+  alertContainer.textContent = message;
+  document.body.append(alertContainer);
 
-export function debounce(callback, delay) {
-  let timeout;
+  setTimeout(() => {
+    alertContainer.remove();
+  }, ERROR_DISPLAY_TIME);
+};
+
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+
   return (...rest) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => callback.apply(this, rest), delay);
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
   };
-}
+};
+
+const getRandomInt = (value1, value2) => {
+  const lower = Math.ceil(Math.min(value1, value2));
+  const upper = Math.floor(Math.max(value1, value2));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
+
+const getRandomElements = (arr, count) => {
+  const randomIndexList = [];
+  const max = Math.min(count, arr.length);
+
+  while (randomIndexList.length < max) {
+    const id = getRandomInt(0, arr.length - 1);
+    if (!randomIndexList.includes(id)) {
+      randomIndexList.push(id);
+    }
+  }
+
+  return randomIndexList.map((id) => arr[id]);
+};
+
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export { getRandomInt, getRandomElements, isEscapeKey, showAlert, debounce };
