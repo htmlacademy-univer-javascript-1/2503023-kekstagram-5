@@ -1,8 +1,14 @@
-import { photos } from './photos.js';
-import { renderThumbnails } from './thumbnails.js';
-import { initFilters } from './filters.js';
+import { showFilteredPictures } from './filter.js';
+import { getData } from './api.js';
+import { showAlert } from './util.js';
 import './form.js';
-import './form-api.js';
 
-renderThumbnails(photos); // Отрисовка миниатюр
-initFilters(photos, renderThumbnails); // Инициализация фильтров
+const fetchPictures = async () => {
+  try {
+    showFilteredPictures(await getData());
+  } catch (error){
+    showAlert(error);
+  }
+};
+
+fetchPictures();
