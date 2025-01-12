@@ -1,49 +1,55 @@
-import { debounce } from './util.js';
+import { renderPictures } from './gallery.js';
+import { debounce, getRandomElements } from './util.js';
 
-const photoFilters = document.querySelector('.img-filters');
-const filterButtons = photoFilters.querySelectorAll('.img-filters__button');
-const RANDOM_PHOTOS_COUNT = 10;
+const MAX_RANDOM_PICTURES_COUNT = 10;
+const ACTIVE_CLASS = 'img-filters__button--active';
 
-function applyFilter(photos, filter) {
-  switch (filter) {
-    case 'filter-random':
-      return photos
-        .slice()
-        .sort(() => Math.random() - 0.5)
-        .slice(0, RANDOM_PHOTOS_COUNT);
-    case 'filter-discussed':
-      return photos
-        .slice()
-        .sort((a, b) => b.comments.length - a.comments.length);
-    default:
-      return photos;
-  }
-}
+const filterSection = document.querySelector('.img-filters');
+const defaultFilter = document.querySelector('#filter-default');
+const randomFilter = document.querySelector('#filter-random');
+const discussedFilter = document.querySelector('#filter-discussed');
 
-export function initFilters(photos, renderThumbnails) {
-  photoFilters.classList.remove('img-filters--inactive');
+const getRandomPictures = (pictures, count) => getRandomElements(pictures, count);
 
-  filterButtons.forEach((button) => {
-    button.addEventListener(
-      'click',
-      debounce((evt) => {
-        // Удаляем класс активности у всех кнопок
-        filterButtons.forEach((btn) => btn.classList.remove('img-filters__button--active'));
+const sortByComments = (a, b) => b.comments.length - a.comments.length;
+const getDiscussedPhotos = (pictures) => [...pictures].sort(sortByComments);
 
-        // Добавляем класс активности нажатой кнопке
-        evt.target.classList.add('img-filters__button--active');
+const clearPictures = () => document.querySelectorAll('.picture').forEach((picture) => picture.remove());
 
-        clearThumbnails();
+const showFilteredPictures = (pictures) => {
+  renderPictures(pictures);
+  filterSection.classList.remove('img-filters--inactive');
 
-        // Применяем выбранный фильтр и отрисовываем миниатюры
-        const filteredPhotos = applyFilter(photos, evt.target.id);
-        renderThumbnails(filteredPhotos);
-      }, 500)
+  const debouncedRender = debounce((filteredPictures) => {
+    clearPictures();
+    renderPictures(filteredPictures);
+  }, 500);
+
+  const updateFilter = (filterFunction, filterButton) => {
+    const currentActiveButton = document.querySelector(`.${ACTIVE_CLASS}`);
+    if (currentActiveButton) {
+      currentActiveButton.classList.remove(ACTIVE_CLASS);
+    }
+    filterButton.classList.add(ACTIVE_CLASS);
+
+    const filteredPictures = filterFunction(pictures);
+    debouncedRender(filteredPictures);
+  };
+
+  randomFilter.addEventListener('click', () => {
+    updateFilter(
+      (photos) => getRandomPictures(photos, MAX_RANDOM_PICTURES_COUNT),
+      randomFilter
     );
   });
-}
 
-function clearThumbnails() {
-  const pictures = document.querySelectorAll('.picture');
-  pictures.forEach((picture) => picture.remove());
-}
+  discussedFilter.addEventListener('click', () => {
+    updateFilter(getDiscussedPhotos, discussedFilter);
+  });
+
+  defaultFilter.addEventListener('click', () => {
+    updateFilter((photos) => photos, defaultFilter);
+  });
+};
+
+export { showFilteredPictures };
